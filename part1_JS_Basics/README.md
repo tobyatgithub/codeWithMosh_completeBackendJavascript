@@ -516,3 +516,329 @@ const date2 = new Date(2018, 4, 11, 9, 0); // month is 0-index, so 4 == May
 ```
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+### Chapter 5. Arrays
+
+#### 2. Adding elements
+
+```js
+const numbers = [3, 4];
+// numbers = []; // -> error
+
+//however, we do can modify
+//end
+numbers.push(5, 6); // -> 3,4,5,6
+
+//begining
+numbers.unshift(1, 2); // -> 1,2,3,4,5,6
+
+//middle
+numbers.splice(2, 0, "a", "b"); // -> 1,2,"a","b",3,4,5,6
+```
+
+#### 3. Finding elements (primitive)
+
+```js
+const numbers = [1, 2, 3, 1, 4];
+
+numbers.indexOf("a"); // -> -1
+numbers.indexOf("2"); // -> -1
+numbers.indexOf(2); // -> 1
+numbers.indexOf(2, 1); // search for 2 starting from index 1
+
+numbers.lastIndexOf(1); // -> 3
+
+numbers.indexOf(1) !== -1; // see whether array contains 1
+numbers.includes(1); // -> true
+```
+
+#### 4. Finding elements (reference type)
+
+```js
+const course = [
+  { id: 1, name: "a" },
+  { id: 2, name: "b" },
+];
+
+course.includes({ id: 1, name: "a" }); // -> false, bcz they are two different objects and have different references.
+const test = course.find(function (element) {
+  return element.name === "a";
+});
+```
+
+#### 5. Arrow functions
+
+```js
+function tmp(element) {
+  return element.name === "a";
+}
+
+// equivalent
+(element) => course.name === "a";
+
+// for more complex function:
+(arg1, arg2) => {
+  return arg1 && arg2;
+};
+```
+
+#### 6. Removing elemtns
+
+```js
+const numbers = [1, 2, 3, 4];
+
+//end
+const last = numbers.pop(); //-> 4, [1,2,3]
+
+// begining
+const first = numbers.shift(); // -> 1, [2,3]
+
+// middle
+numbers = [1, 2, 3, 4];
+numbers.splice(2, 1); // -> [1,2,4]
+
+numbers = [1, 2, 3, 4];
+numbers.splice(2, 2); // -> [1,2]
+```
+
+#### 7. Emptying an array
+
+```js
+// 1. reassign
+let numbers = [1, 2, 3, 4];
+let another = numbers;
+numbers = [];
+
+// 2.
+numbers.length = 0;
+
+// 3.
+numbers.split(0, numbers.length);
+
+// 4.
+while (numbers.length > 0) numbers.pop();
+
+console.log(numbers);
+console.log(another);
+```
+
+#### 8. Combining and slicing arrays
+
+```js
+const first = [1, 2, 3];
+const second = [4, 5, 6];
+
+const combined = first.concat(second); // [1,2,3,4,5,6]
+
+const slice = combined.slice(2, 4); // [3,4]
+const slice1 = combined.slice(2); // [3,4,5,6]
+const slice2 = combined.slice(); // [1,2,3,4,5,6]
+```
+
+Notice that for objects here, `slice` only copy the reference!
+
+#### 9. The spread operator (better and cleaner)
+
+```js
+const first = [1, 2, 3];
+const second = [4, 5, 6];
+
+const combined = [...first, ...second]; // [1,2,3,4,5,6]
+const another = [...first, "a", ...second, "b"]; // [1,2,3,"a",4,5,6,"b"]
+
+const copy = [...combined];
+```
+
+#### 10. Iterating an array
+
+```js
+const numbers = [1, 2, 3];
+
+for (let number of numbers) {
+  console.log(number);
+}
+
+numbers.forEach(function (number) {
+  console.log(number);
+});
+
+// forEach also allows indexing
+numbers.forEach((number, index) => console.log(index, number));
+```
+
+#### 11. Joining arrays
+
+```js
+const numbers = [1, 2, 3];
+numbers.join(","); // -> "1,2,3"
+
+const message = "This is my first message";
+message.split(" "); // -> ["This", "is", "my", "first", "message"]
+```
+
+#### 12. Sorting arrays
+
+```js
+const numbers = [2, 3, 1];
+numbers.sort(); // [1,2,3]
+
+numbers = [2, 3, 1];
+numbers.reverse(); // [1,3,2]
+```
+
+For more flexibility:
+
+```js
+const courses = [
+  { id: 1, name: "node.js" },
+  { id: 2, Name: "javascript" },
+];
+
+// need to provide a comparator.
+courses.sort(function (a, b) {
+  if (a.name < b.name) return -1;
+  if (a.name > b.name) return 1;
+  return 0;
+});
+```
+
+#### 13. Testing the elements of an array
+
+```js
+const number = [1, -1, 2, 3];
+const allPositive = numbers.every(function (value) {
+  return value >= 0;
+}); // -> false
+
+const somePositive = numbers.some(function (value) {
+  return value >= 0;
+}); // -> true
+```
+
+#### 14. Filtering an array
+
+```js
+const numbers = [1, -1, 2, 3];
+numbers.filter(function (value) {
+  return value >= 0;
+}); // -> [1,2,3]
+```
+
+#### 15. Mapping an array
+
+```js
+const number = [1, -1, 2, 3];
+number.map((n) => "<li>" + n + "</li>"); // ['<li>1</li>', '<li>-1</li>', '<li>2</li>', '<li>3</li>']
+
+// CAREFUL WARNING
+const wrongEmptyItems = number.map((n) => {
+  value: n;
+}); // here {} will be considered as a code block, thus undefined
+
+const rightItems = number.map((n) => ({
+  value: n,
+})); // while what we want to return is an object, thus needs ({})
+```
+
+#### 16. Reducing an array
+
+```js
+const numbers = [1, -1, 2, 3];
+
+let sum = 0;
+for (let n of numbers) sum += n; // -> 5
+
+// equivalent to
+numbers.reduce((accumulator, currentValue) => {
+  return accumulator + currentValue;
+}, 0); // this means that accumulator = 0
+// -> 5
+// a = 0, c = 1 -> a = 1
+// a = 1, c = -1 -> a = 0
+// a = 0, c = 2 -> a = 2
+// a = 2, c = 3 -> a = 5
+```
+
+We can also skip the `0` init for `accumulator`, then `accumulator` will just be the first element.
+
+#### 20. exercise - moving an element
+
+```js
+const numbers = [1, 2, 3, 4];
+
+const output = move(numbers, 1, 2); // -> [1,3,4,2]
+move(numbers, 1, 3); // -> error
+move(numbers, 3, -1); // -> [1,2,4,3]
+
+console.log(output);
+
+function move(array, index, offset) {
+  const position = index + offset;
+  if (position >= array.length || position < 0) {
+    console.error("Invalid offset.");
+    return;
+  }
+  const output = [...array];
+  const element = output.splice(index, 1)[0];
+  output.splice(position, 0, element);
+  return output;
+}
+```
+
+Very interesting exercise --> allows you to peek how indexing works in js.
+
+#### 21. exercise5 - count occurrences
+
+```js
+const numbers = [1, 2, 3, 4, 1];
+const count = countOccurrences(number, -1);
+console.log(count);
+
+function countOccurrences(array, searchElement) {
+  return array.reduce((accumulator, current) => {
+    const occurrence = current === searchElement ? 1 : 0;
+    // console.log(accumulator, current, searchElement);
+    return accumulator + occurrence;
+  }, 0);
+}
+```
+
+#### 22. exercise6 - get max
+
+```js
+const numbers = [1, 2, 3, 4];
+const max = getMax([]);
+console.log(max);
+
+function getMax(array) {
+  if (array.length === 0) return undefined;
+
+  // array.reduce((acc, cur) => {
+  //   // if (cur > acc) return cur;
+  //   // return acc;
+
+  //   return cur > acc ? cur : acc;
+  // });
+  return array.reduce((a, b) => (a > b ? a : b));
+}
+```
+
+#### 23. exercise7 - find movies
+
+Find all the movies in 2018 with rating > 4, sort them by rating in descending order, and only return their title.
+
+```js
+const movies = [
+  { title: "a", year: 2018, rating: 4.5 },
+  { title: "b", year: 2018, rating: 4.7 },
+  { title: "c", year: 2018, rating: 3 },
+  { title: "d", year: 2017, rating: 4.5 },
+];
+
+const result = movies
+  .filter((element) => element.rating > 4 && element.year == 2018)
+  .sort((a, b) => a.rating > b.rating)
+  .reverse()
+  .map((element) => element.title);
+console.log(result);
+```
