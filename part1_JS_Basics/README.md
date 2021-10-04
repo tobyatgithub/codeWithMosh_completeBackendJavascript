@@ -68,3 +68,24 @@ let person = {
   age: 30,
 };
 ```
+
+#### 6. Arrays
+
+```js
+let colors = ["red", "blue"];
+color[2] = 1;
+console.log(colors); // ->["red", "blue", 1]
+typeof colors; // -> object
+```
+
+#### 7. Functions
+
+```js
+function greet(firstName, lastName) {
+  console.log("Hello " + firstName + " " + lastName);
+}
+
+greet("John", "Smith");
+```
+
+### Chapter 2. Operators
