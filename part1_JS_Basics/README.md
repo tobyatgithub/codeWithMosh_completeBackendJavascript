@@ -174,3 +174,127 @@ In 8-bit system,
 R = `1 | 2` = 00000011 = 3 <- bitwise OR
 
 A = `1 & 2` = 00000000 = 0 <- bitwise AND
+
+### Chapter 3. Control Flow
+
+#### 1. if...else
+
+```js
+if (condition) {
+  statment
+}
+else if (another condition) {
+  statment
+}
+else if (yet another condition) {
+  statment
+}
+else
+  statment
+```
+
+#### 2. switch case
+
+```js
+let role;
+switch (role) {
+  case "guest":
+    statment;
+    break;
+  case "moderator":
+    statment;
+    break;
+
+  default:
+    statment;
+}
+```
+
+You need the break otherwise it will keep checking.
+
+#### 3. For loop
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log("hello world");
+}
+```
+
+#### 4. while loop
+
+```js
+let i = 0;
+while (i <= 5) {
+  console.log("hellow world");
+  i++;
+}
+```
+
+#### 5. do ... while loop
+
+```js
+let i = 0;
+do {
+  console.log("hello");
+  i++;
+} while (i <= 5);
+```
+
+Difference between while loop and do-while loop: do-while loop will always at least run once.
+
+#### 7. for...in loop
+
+```js
+const person = {
+  name: "Mosh",
+  age: 30,
+};
+
+for (let key in person) {
+  console.log(key, person[key]);
+}
+// return:
+// name Mosh
+// age 30
+
+const colors = ["red", "green", "blue"];
+for (let index in colors) {
+  console.log(index, colors[index]);
+}
+// return:
+// 0 red
+// 1 green
+// 2 blue
+```
+
+#### 8. for...of loop
+
+```js
+const colors = ["red", "green", "blue"];
+for (let color of colors) {
+  console.log(color);
+}
+// return:
+// red
+// green
+// blue
+```
+
+#### 9. break and continue
+
+```js
+let i = 0;
+while (i <= 10) {
+  if (i === 8) break;
+  if (i % 2 === 0) {
+    i++;
+    continue;
+  }
+  console.log(i);
+  i++;
+}
+```
+
+`break` = jump out of this whole loop (in this case the while loop).
+
+`continue` = jump to the next iteration.
