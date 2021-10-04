@@ -298,3 +298,221 @@ while (i <= 10) {
 `break` = jump out of this whole loop (in this case the while loop).
 
 `continue` = jump to the next iteration.
+
+### Chapter 4. Objects
+
+#### 1. Basics
+
+```js
+const circle = {
+  radius: 1,
+  location: {
+    x: 1,
+    y: 1,
+  },
+  isVisible: true,
+  draw: function () {
+    console.log("draw");
+  },
+  move: function () {
+    console.log("move");
+  },
+};
+
+circle.draw(); // -> draw
+```
+
+#### 2. Factory functions
+
+What if we need more than one circle from last part.
+
+```js
+// Factory function
+function createCircle(radius) {
+  return {
+    radius, // === radius: radius
+    draw() {
+      console.log("draw");
+    }, // === draw: function() {...}
+  };
+}
+
+const circle1 = createCircle(1);
+// we only define draw once and only in one place!
+```
+
+Camel naming convention: oneTwoThree
+
+#### 3. Constructor functions
+
+Pascale naming convention: OneTwoThree
+
+```js
+// Constructor function
+function Circle(radius) {
+  this.radius = radius;
+  this.drwa() = function() {
+    console.log("draw");
+  }
+}
+
+const circle = new Circle(1);
+```
+
+#### 4. Dynamic nature of objects
+
+That is, you can always add new properties to an object.
+
+```js
+const circle = {
+  radius: 1,
+};
+//const protection:
+// circle = {} --> error
+
+//add
+circle.color = "yellow";
+circle.draw = function () {};
+
+//remove
+delete circle.color;
+```
+
+Notice that, the `const` keyword here protects the circle content, in this case is the "radius".
+
+#### 5. Constructor property
+
+Constructor property = the function that is used to create the property.
+
+For example, `new String()` is the constructor property for `"", ''`
+
+![alt text](C4-5-ConstructorProperty-a.png "Title")
+
+#### 6. Functions are objects
+
+#### 7. Value vs. Reference types
+
+```js
+// Primary types are Independent!
+let x = 10;
+let y = x;
+
+x = 20;
+console.log(x, y); // -> 20, 10
+```
+
+Primitives are copied by their value.
+
+```js
+// Reference types are dependent
+let a = { value: 10 };
+let b = a;
+
+a.value = 20;
+console.log(a, b); // -> 20, 20
+```
+
+Objects are copied by their reference.
+
+#### 8. Enumerating properties of an object
+
+Three ways:
+
+```js
+const circle = {
+  radius: 1,
+  draw() {
+    console.log("draw");
+  },
+};
+
+// 1. gives you the keys of an object -> radius, draw
+for (let key in circle) {
+  console.log(key, circle[key]);
+}
+
+// 2. same to method 1
+for (let key of Object.keys(circle)) {
+  console.log(key);
+}
+
+// 3. enumerate, which returns an array
+for (let entry of Object.entries(circle)) {
+  console.log(entry);
+}
+```
+
+#### 9. Cloning an object
+
+```js
+const circle = {
+  radius: 1,
+  draw() {
+    console.log("draw");
+  },
+};
+
+// 1. method 1
+const another = {};
+for (let key in circle) {
+  another[key] = circle[key];
+}
+
+// 2. method 2
+const another1 = Object.assign({}, circle);
+const another2 = Object.assign({ color: blue }, circle); // you even can add more properties to the target object
+
+// 3. method 3, spread operator
+const another3 = { ...circle };
+```
+
+#### 10. Garbage collection
+
+#### 11. Math
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math
+
+#### 12. String
+
+```js
+// String primitive
+const message = "hi";
+
+//String object
+const another = new String("hi");
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+
+Search for "Escape notation" for ways such as `"\n", "\'"` an so on.
+
+#### 13. Template Literals
+
+```js
+const message = "This is my\n" + "first message";
+
+const another = `This is my
+'first' message`;
+
+const name = "John";
+const host = "Toby";
+const email = `Hi ${name},
+
+Thank you for joining my mailing list.
+
+Regards,
+${host}
+`;
+```
+
+The `console.log` will show the content in the template literals exactly as it is shown in the template. Nice.
+
+#### 14. Date
+
+```js
+const now = new Date();
+const date1 = new Date("May 11 2018 9:00");
+const date2 = new Date(2018, 4, 11, 9, 0); // month is 0-index, so 4 == May
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
