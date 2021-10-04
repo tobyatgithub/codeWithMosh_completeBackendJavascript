@@ -89,3 +89,88 @@ greet("John", "Smith");
 ```
 
 ### Chapter 2. Operators
+
+#### 2. Arithmetic Operators
+
+aka, mathmatical operators, such as `+, -, *, /, %, **, ++, -- `
+
+notice that there's a difference between `++x` and `x++`.
+
+`++x` will increase first, and `x++` will increase after:
+
+```js
+let x = 10;
+console.log(++x); // 11
+
+let y = 20;
+console.log(y++); // 20
+```
+
+#### 3. Assignment Operators
+
+`=, +=, -=`
+
+#### 4. Comparison Operators
+
+`>, >=, <, <=, !==, ===`
+
+#### 5. Equality Operators
+
+Strict equality `===` vs. lose equality `==`:
+stict: "type" and "value" both are the same.
+
+```js
+console.log(1 === 1); // true
+console.log("1" === 1); // false
+```
+
+lose: convert the type first, and then see whether the value is the same.
+
+```js
+console.log(1 == 1); // true
+console.log("1" == 1); // true
+console.log("1" == true); // true
+```
+
+#### 6. Ternary Operator
+
+formula = condition ? (true result) : (false result)
+
+```js
+let points = 110;
+let type = points > 100 ? "gold" : "silver";
+```
+
+#### 7. Logical Operator
+
+`AND, && ` return true if both operands are true.
+
+`OR, ||` return true if one of the operands is true.
+
+#### 8. Logical Operator with Non-booleans
+
+```js
+false || "Mosh"; // -> "Mosh"
+false || 1; // -> 1
+```
+
+"falsy" = `undefined, null, 0, false, '', NaN`
+"truthy" = anything that is not "falsy"
+
+"short-circuiting"
+
+```js
+false || 1 || 2; // -> 1, it returns as soon as we find a truthy
+```
+
+#### 9. Bitwise Operator
+
+In 8-bit system,
+
+1 = 00000001
+
+2 = 00000010
+
+R = `1 | 2` = 00000011 = 3 <- bitwise OR
+
+A = `1 & 2` = 00000000 = 0 <- bitwise AND
