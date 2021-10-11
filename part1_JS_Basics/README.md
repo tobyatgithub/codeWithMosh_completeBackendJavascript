@@ -842,3 +842,335 @@ const result = movies
   .map((element) => element.title);
 console.log(result);
 ```
+
+### Chapter 6. Functions
+
+#### 1. Function declaration vs. expression
+
+```js
+// declaration
+function walk() {
+  console.log("walk");
+}
+walk();
+
+// anonymous expression
+let run = function () {
+  console.log("run");
+};
+run(); // to call this function
+
+// named expression
+let jump = function fun() {
+  console.log("jump");
+};
+```
+
+#### 2. Difference between declaration vs. expression
+
+... pretty much no huge difference.
+
+Just the expression will treat function as an object and thus you can not call it before it is defined.
+
+And this is not the case for declaration because of hoist - i.e. javascript engine will move all the function declaration to the top when executing. So effectively you can define it down below and call it before the declaration.
+
+#### 3. Arguments
+
+The function arguments in js is very different from python or java. It is...very flexible or say less restricted.
+
+```js
+function sum(a, b) {
+  return a + b;
+}
+
+sum(1, 2); // -> 3
+sum(1); // -> NaN, bcz b is undefined
+sum(1, 2, 3, 4, 5); // -> 3, because js will look the whole [1,2,3,4,5] as an iterable array, and pick the first one be a, the second one be b, and execute.
+```
+
+Interesting right? Even more:
+
+```js
+function sum(a, b) {
+  let total = 0;
+  for (let value of arguments) total += value;
+  return total;
+}
+sum(1, 2, 3, 4, 5); //-> 15
+
+// As you can see, the argument a and b doesn't make much use here
+// In fact, we can remove it totally...
+function sum() {
+  let total = 0;
+  for (let value of arguments) total += value;
+  return total;
+}
+sum(1, 2, 3, 4, 5); //-> 15
+```
+
+#### 4. The Rest Operator
+
+```js
+function sum(...args) {
+  // this args will be an array of all the inputs
+  return args.reduce((a, b) => a + b);
+}
+
+sum(1, 2, 3, 4, 5); //-> 15
+```
+
+Notice that if we remove the `...` in front of `args`, it will not work, it will only give you 1 (aka the single first element.)
+
+This Rest Operator actually can come handy:
+
+```js
+function sum(discount, ...prices) {
+  return (1 - discount) * prices.reduce((a, b) => a + b);
+}
+sum(0.1, 20, 30); //->45
+```
+
+Notice that the Rest Operator must be the last formal parameter, otherwise `Uncaught SyntaxError`.
+
+#### 5. Default Parameters
+
+Very much similar to python
+
+```js
+function interest(principal, rate = 3.5, years = 5) {
+  return ((principal * rate) / 100) * years;
+}
+
+interest(10000); // -> 1750
+```
+
+#### 6. Getters and Setters
+
+Interesting syntax, js have `get` and `set` keywords for object to make this easy
+
+```js
+const person = {
+  firstName: "Mosh",
+  lastName: "Hamedani",
+  get fullName() {
+    return `${person.firstName} ${person.lastName}`;
+  },
+  set fullName(value) {
+    const parts = value.split(" ");
+    this.firstName = parts[0];
+    this.lastName = parts[1];
+  },
+};
+
+person.fullName = "John Smith";
+console.log(person); // you will see all the properties are changed.
+```
+
+#### 7. Try and Catch
+
+To handle uncaught errors ~ "Defensive programming".
+
+```js
+const person = {
+  firstName: "Mosh",
+  lastName: "Hamedani",
+  // get fullName() {
+  //   return `${person.firstName} ${person.lastName}`;
+  // },
+  set fullName(value) {
+    if (typeof value !== "string") throw new Error("Value is not a string.");
+    const parts = value.split(" ");
+    if (parts.length !== 2) throw new Error("Enter a first and last name.");
+    this.firstName = parts[0];
+    this.lastName = parts[1];
+  },
+};
+
+try {
+  person.fullName = "John Smith";
+} catch (e) {
+  alert(e);
+}
+console.log(person); // you will see all the properties are changed.
+```
+
+You throw the error in the function, and then use `try` and `catch` keywords to catch them.
+
+#### 8. Local vs. Global Scope
+
+```js
+//Local variables
+{
+  const message = "hi"; // local to this code block
+}
+console.log(message); // -> reference error
+
+for (let i = 0; i < 5; i++) {
+  console.log(i); //-> will print correctly
+}
+
+console.log(i); //-> reference error
+
+//Global
+const color = "red";
+
+function start() {
+  console.log(color); //-> red
+}
+
+function stop() {
+  const color = "blue";
+  console.log(color); //-> blue
+} // <- however, it is not a good idea to mix global and local variables.
+start();
+stop();
+console.log(color); //->red
+```
+
+#### 9. Let vs. Var
+
+variables defined by `let` is limited to the block (aka block-scoped); while variables defined by `var` is limited to the function (aka function-scoped).
+
+Recommend: avoid using `var`, as it may accidentially overwrite something (if you use `var` outside of a function, it will get attached to the `window` object, which will be a BAD practice.)
+
+#### 10. This
+
+> This == the **object** that is executing the current function
+
+```js
+//CASE 1 method -> obj
+
+const video = {
+  title: "a",
+  play() {
+    console.log(this);
+  },
+};
+video.play(); //-> will print the video object.
+
+video.stop = function () {
+  console.log(this);
+};
+video.stop(); //-> will print the video object (same above), bcz stop is a method.
+
+// CASE 2 function -> global (window, global)
+function playVideo() {
+  console.log(this);
+}
+
+playVideo(); //-> will print out Window
+
+// CASE 2.5 exception for function with new key word
+function Video(title) {
+  this.title = title;
+  console.log(this);
+}
+
+const v = new Video("b"); //-> Video {title:"b"} object, because the new keyword will init an empty object {} and put things into it. Thus this will show this new object as "this".
+
+// CASE 3, the complex one with a limited solution
+// 3.1 the error case:
+const video = {
+  title: "a",
+  tags: ["a", "b", "c"],
+  showTags() {
+    // we want to print each tag with title
+    this.tags.forEach(function (tag) {
+      console.log(this.title, tag);
+    });
+  },
+};
+
+video.showTags(); //-> will yield "undefined a; undefined b; undefined c"
+// Reason being that the "this" inside showTags() is the function type, thus -> global who doesn't have .title
+
+//3.2 a limited fix
+const video = {
+  title: "a",
+  tags: ["a", "b", "c"],
+  showTags() {
+    // we want to print each tag with title
+    this.tags.forEach(function (tag) {
+      console.log(this.title, tag);
+    }, this); // passing in this object to fix it
+  },
+};
+
+video.showTags(); // -> "a a; a b; a c"
+// this method is limited bcz not every function allows passing in a "this" at the end.
+```
+
+#### 11. Changing this
+
+To expand the limited fix in previous part:
+
+```js
+//1. not that good solution, but widly used
+const video = {
+  title: "a",
+  tags: ["a", "b", "c"],
+  showTags() {
+    const self = this;
+    // we want to print each tag with title
+    this.tags.forEach(function (tag) {
+      console.log(self.title, tag);
+    }); // passing in this object to fix it
+  },
+};
+
+video.showTags(); // -> "a a; a b; a c"
+```
+
+```js
+// 2. better solution: use call or apply
+function playVideo(a, b) {
+  console.log(this);
+}
+
+playVideo(); //-> will print window object
+playVideo.call({ name: "Mosh" }, 1, 2); //-> {name: "Mosh"}
+playVideo.apply({ name: "Mosh" }, [1, 2]); //-> {name: "Mosh"}
+playVideo.bind({ name: "Mosh" })(); //-> {name: "Mosh"}
+```
+
+Applying this `bind` method to the previous case, here's how we can fix it:
+
+```js
+const video = {
+  title: "a",
+  tags: ["a", "b", "c"],
+  showTags() {
+    // we want to print each tag with title
+    this.tags.forEach(
+      function (tag) {
+        console.log(this.title, tag);
+      }.bind(this)
+    ); // passing in this object to fix it
+  },
+};
+
+video.showTags(); // -> "a a; a b; a c"
+```
+
+One more method to do is the arrow function, which inherit `this` from the containing funciton.
+
+```js
+const video = {
+  title: "a",
+  tags: ["a", "b", "c"],
+  showTags() {
+    // we want to print each tag with title
+    this.tags.forEach((tag) => {
+      console.log(this.title, tag);
+    }); // passing in this object to fix it
+  },
+};
+
+video.showTags(); // -> "a a; a b; a c"
+```
+
+In short, here are **three methods** to fix this `this` issue:
+
+1. `const self.this`
+2. use `bind(this)` at the end
+3. [Recommended] use arrow function
