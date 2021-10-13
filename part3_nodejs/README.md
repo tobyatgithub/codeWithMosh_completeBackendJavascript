@@ -115,3 +115,162 @@ const port = process.env.PORT || 3000; // this line will make const port = 5000!
 // otherwise, if we didn't specified port in our terminal, 3000 will be returned as result of false || 3000
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 ```
+
+## Asynchronous Javascript
+
+> Notice that asynchronous != multi-thread
+
+When dealing with aysnc functions, there is a very practical challenge: we may not know what the return will be by the time we want to display them, for example:
+
+```js
+console.log("Before");
+const user = getUser(1);
+console.log(user);
+console.log("After");
+
+function getUser(id) {
+  setTimeout(() => {
+    console.log("Reading db...");
+    return { id: id, github: "toby" };
+  }, 2000);
+}
+```
+
+In this example, we will get:
+
+```
+Before
+After
+undefined
+```
+
+because the function `getUser` won't be able to access the `return {id: id, ...}`
+
+And there are three common solutions:
+
+### 1. Callbacks
+
+```js
+// When dealing with aysnc functions, there is a very practical challenge.
+
+console.log("Before");
+getUser(1, function (user) {
+  console.log("User", user);
+});
+console.log("After");
+
+function getUser(id, callback) {
+  setTimeout(() => {
+    console.log("Reading a user from a database... ");
+    callback({ id: id, githubUsername: "Toby" });
+  }, 2000); // this setTimeout is aync!
+}
+```
+
+Extending from the previous example to make is slightly more compelx:
+
+```js
+console.log("Before");
+getUser(1, function (user) {
+  console.log("User", user);
+
+  getRepo(user, function (repo) {
+    console.log(repo);
+  });
+});
+console.log("After");
+
+function getUser(id, callback) {
+  setTimeout((id) => {
+    console.log("Reading a user from a database... ");
+    callback({ id: id, githubUsername: "Toby" });
+  }, 2000); // this setTimeout is aync!
+}
+
+function getRepo(user, callback) {
+  setTimeout((user) => {
+    console.log("calling github api...");
+    callback(["repo1", "repo2", "repo3"]);
+  });
+}
+```
+
+ISSUE:
+As the async content we require grows (for example user -> repo -> commits...), this async callback can grow into a huge nested loop (`CALLBACK HELL` or `CHRISTMAS TREE PROBLEM`.)
+
+POTENTIAL SOLUTION:
+We can flat these nests out by changing annoymoust functions into named functions (nested -> linked list).
+
+```js
+console.log("Before");
+getUser(1, getRepositories);
+console.log("After");
+
+function getRepositories(user) {
+  getRepositories(user.gitHubUsername, getCommits);
+}
+
+function getCommits(repos) {
+  getCommits(repo, displayCommit);
+}
+
+function displayCommit(commits) {
+  console.log(commits);
+}
+
+function getUser(id, callback) {
+  setTimeout((id) => {
+    console.log("Reading a user from a database... ");
+    callback({ id: id, githubUsername: "Toby" });
+  }, 2000); // this setTimeout is aync!
+}
+
+function getRepo(user, callback) {
+  setTimeout((user) => {
+    console.log("calling github api...");
+    callback(["repo1", "repo2", "repo3"]);
+  });
+}
+```
+
+### 2. Promises
+
+BETTER, we can use promises to solve the issues above (Callback hell.)
+
+> PROMISE = holds the eventual result of an asynchronous operation.
+
+sequential promises:
+
+```js
+const user = getUser(2);
+user
+  .then((user) => getRepositories(user.githubUsername))
+  .then((repos) => getCommits(repos[0]))
+  .then((commits) => console.log("Commits:", commits))
+  .catch((err) => console.log("Error:", err.message));
+```
+
+it is executed one by one
+
+parallele promises:
+
+```js
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    console.log("Async operation 1");
+    resolve(1);
+  }, 2000);
+});
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    console.log("Async operation 2");
+    resolve(2);
+  }, 2000);
+});
+
+Promise.all([p1, p2]).then((result) => console.log(result));
+// notice the result here will be an array[resolve1, resolve2]
+```
+
+### 3. Aync/await
