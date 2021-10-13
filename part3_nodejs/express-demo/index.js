@@ -19,18 +19,10 @@ app.get("/api/courses", (req, res) => {
 });
 
 app.post("/api/courses", (req, res) => {
-  const schema = {
-    name: Joi.string().min(3).required(),
-  };
+  const { error } = validateCourses(req.body);
 
-  const result = Joi.validate(req.body, schema);
-  console.log(result);
-  // if (!req.body.name || req.body.name.length < 3) {
-  //   res.status(400).send("Name is required with length >= 3 char.");
-  //   return;
-  // }
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
+  if (error) {
+    res.status(400).send(error.details[0].message);
     return;
   }
 
@@ -49,6 +41,29 @@ app.get("/api/courses/:id", (req, res) => {
   res.send(course);
 });
 
+app.put("/api/courses/:id", (req, res) => {
+  // look up the course
+  const course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course)
+    res.status(404).send("The course with the given ID can not be found.");
+
+  // validate
+  // since we only care about the error property of result,
+  // we can use object deconstructor here.
+  // const result = validateCourses(req.body);
+  const { error } = validateCourses(req.body);
+  // if (result.error) {
+  if (error) {
+    // res.status(400).send(result.error.details[0].message);
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  // update courses
+  course.name = req.body.name;
+  res.send(course);
+});
+
 app.get("/api/posts/:year/:month", (req, res) => {
   //http://localhost:3000/api/posts/2019/2?sortBy=Name
   res.send({ query: req.query, params: req.params });
@@ -58,3 +73,11 @@ app.get("/api/posts/:year/:month", (req, res) => {
 // if we set the mac port environment via export PORT=5000
 const port = process.env.PORT || 3000; // this line will make const port = 5000!
 app.listen(port, () => console.log(`Listening on port ${port}...`));
+
+function validateCourses(course) {
+  const schema = {
+    name: Joi.string().min(3).required(),
+  };
+
+  return Joi.validate(course, schema);
+}
