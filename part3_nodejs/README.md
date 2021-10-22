@@ -116,7 +116,38 @@ const port = process.env.PORT || 3000; // this line will make const port = 5000!
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 ```
 
-## Asynchronous Javascript
+## 3.Advanced Express
+
+See in `express-demo` folder.
+
+```js
+const port = process.env.PORT || 3000; // this line will make const port = 5000!
+app.listen(port, () => console.log(`Listening on port ${port}...`));
+```
+
+And then, we have `get`, `post`, `put`, and `delete` from `express()` to perform basic CRUD functionalities.
+
+### 1). Middleware function:
+
+**A middleware function** = a function that takes a `request` object, and either returns a response to the client, or passes control to another middleware function.
+
+For example, the route handler function we saw previous is one middleware function:
+
+```js
+app.get("/", (req, res) => {
+  res.send("Hi mom");
+});
+```
+
+Where the `(req, res) => ...` is the route handler function.
+
+### 2). creating custom middleware
+
+Notice that our middleware function is called in sequence.
+
+## 4. Asynchronous Javascript
+
+See in the `async-demo` folder.
 
 > Notice that asynchronous != multi-thread
 
@@ -274,3 +305,16 @@ Promise.all([p1, p2]).then((result) => console.log(result));
 ```
 
 ### 3. Aync/await
+
+```js
+async function displayCommits() {
+  try {
+    const user2 = await getUser(1);
+    const repos = await getRepositories(user2.githubUsername);
+    const commits = await getCommits(repos[0]);
+    console.log(commits);
+  } catch (error) {
+    console.log("error:", error.message);
+  }
+}
+```
