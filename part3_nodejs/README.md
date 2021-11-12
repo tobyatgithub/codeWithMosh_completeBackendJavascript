@@ -270,9 +270,24 @@ BETTER, we can use promises to solve the issues above (Callback hell.)
 
 > PROMISE = holds the eventual result of an asynchronous operation.
 
+The promise constructor takes one argument, a callback with two parameters, resolve and reject. Do something within the callback, perhaps async, then call resolve if everything worked, otherwise call reject.
+
+Like throw in plain old JavaScript, it's customary, but not required, to reject with an Error object. The benefit of Error objects is they capture a stack trace, making debugging tools more helpful.
+
+`await` can be put in front of any async promise-based function to pause your code on that line until the promise fulfills, then return the resulting value.
+
 sequential promises:
 
 ```js
+function getUser(id) {
+  return new Promise((resolve, rejcet) => {
+    setTimeout(() => {
+      console.log("Reading a user from database...");
+      resolve({ id: id, githubUsername: "Toby" });
+    }, 2000);
+  });
+}
+
 const user = getUser(2);
 user
   .then((user) => getRepositories(user.githubUsername))

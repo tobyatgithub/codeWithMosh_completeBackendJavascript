@@ -5,6 +5,15 @@ const express = require("express");
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded());
+
+/*
+Allow serving static files. For example,
+with the current set up with -public-readme.txt,
+if we go to localhost:PORT/readme.txt,
+we shall see the text content in the readme.txt
+*/
+app.use(express.static("public"));
 
 app.use(logger);
 
