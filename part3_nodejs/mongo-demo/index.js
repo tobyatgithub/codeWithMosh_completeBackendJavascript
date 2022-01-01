@@ -20,19 +20,21 @@ const Course = mongoose.model("Course", courseSchema); // Course -> class
 // ADDING DOCUMENTS
 async function createCourse() {
   const course = new Course({
-    name: "python course",
+    name: "node course",
     author: "Mosh",
-    tags: ["python", "backend"],
+    tags: ["node", "backend"],
     isPublished: true,
   });
   const result = await course.save();
   console.log(result);
 }
 
-// createCourse();
+createCourse();
 
 // QUERY with FILTER
 async function getCourses() {
+  const pageNumber = 2;
+  const pageSize = 10;
   // eq (equal)
   // ne (not equal)
   // gt (greater than)
@@ -45,7 +47,8 @@ async function getCourses() {
     // price: { $gt: 10, $lte: 20 }, // find all with 10 < price <= 20
     // price: { $in: [10, 15, 20] }, // find price equals 10 or 15 or 20
   })
-    .limit(10)
+    .skip((pageNumber - 1) * pageSize)
+    .limit(pageSize)
     .sort({ name: 1 }) // 1 = ascending order, otherwise 01
     .select({ name: 1, tags: 1 });
 
