@@ -319,6 +319,34 @@ Promise.all([p1, p2]).then((result) => console.log(result));
 // notice the result here will be an array[resolve1, resolve2]
 ```
 
+Chaining promises:
+
+```js
+var promise = new Promise(function (resolve, reject) {
+  resolve(1);
+});
+
+promise
+  .then(function (val) {
+    console.log(val); // 1
+    return val + 2;
+  })
+  .then(function (val) {
+    console.log(val); // 3
+  });
+
+// promise-like
+getJSON("story.json")
+  .then(function (story) {
+    return getJSON(story.chapterUrls[0]);
+  })
+  .then(function (chapter1) {
+    console.log("Got chapter 1!", chapter1);
+  });
+```
+
+Notice that when you return something from a `then()` callback, it's a bit magic. If you return a value, the next `then()` is called with that value. However, if you return something promise-like, the next `then()` waits on it, and is only called when that promise settles (succeeds/fails).
+
 ### 3. Aync/await
 
 ```js
@@ -333,3 +361,5 @@ async function displayCommits() {
   }
 }
 ```
+
+https://web.dev/promises/
