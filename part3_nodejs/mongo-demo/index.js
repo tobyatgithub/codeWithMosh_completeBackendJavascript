@@ -29,7 +29,7 @@ async function createCourse() {
   console.log(result);
 }
 
-createCourse();
+// createCourse();
 
 // QUERY with FILTER
 async function getCourses() {
@@ -55,7 +55,7 @@ async function getCourses() {
   console.log(courses);
 }
 
-getCourses();
+// getCourses();
 
 async function getCoursesOR() {
   // or
@@ -69,7 +69,7 @@ async function getCoursesOR() {
   console.log(courses);
 }
 
-getCoursesOR();
+// getCoursesOR();
 
 async function getCoursesRE() {
   // in Regular Expression:
@@ -89,4 +89,50 @@ async function getCoursesRE() {
   console.log(courses);
 }
 
-getCoursesRE();
+// getCoursesRE();
+
+async function updateCourseQueryFirst(id) {
+  // Approach: Query first
+  // findById()
+  const course = await Course.findById(id);
+  if (!course) return;
+  // Modify its properties way 1
+  course.set({
+    isPublished: true,
+  });
+  // Modify its properties way 2
+  course.author = "Another Author";
+  // save()
+  const result = await course.save();
+  console.log(result);
+}
+
+// updateCourseQueryFirst("61cfa78bf758f787d19ca676");
+
+async function updateCourseUpdateFirst(id) {
+  // Approach: Update first
+  // Update directly
+  const result = await Course.update(
+    { _id: id },
+    {
+      $set: { author: "Mosh", isPublished: false },
+    }
+  );
+
+  // Optionally: get or print the updated document
+  console.log(result);
+}
+
+// updateCourseUpdateFirst("61cfa78bf758f787d19ca676");
+
+async function removeCourse(id) {
+  // delete directly
+  // const result = await Course.deleteOne({ _id: id }); // vs.deleteMany
+  // console.log(result);
+
+  // delete and show
+  const course = await Course.findByIdAndRemove(id);
+  console.log(course);
+}
+
+removeCourse("61cfa78bf758f787d19ca676");
