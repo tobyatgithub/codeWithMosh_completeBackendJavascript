@@ -14,8 +14,14 @@ const courseSchema = new mongoose.Schema({
   tags: {
     type: Array,
     validate: {
-      validator: function (v) {
-        return v && v.length > 0; // v&& for null point check
+      isAsync: true,
+      validator: function (v, callback) {
+        // Do some async work
+        setTimeout(() => {
+          const result = v && v.length > 0;
+          callback(result);
+        }, 3000);
+        // return v && v.length > 0; // v&& for null point check
       },
       message: "A course shall have at least one tag.",
     },
@@ -42,6 +48,7 @@ async function createCourse() {
     author: "Mosh",
     tags: ["node", "backend"],
     isPublished: true,
+    price: 20,
   });
 
   try {
