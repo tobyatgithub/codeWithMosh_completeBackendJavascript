@@ -8,11 +8,20 @@ mongoose
 
 // DEFINING A SCHEMA
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true, minlength: 5, maxlength: 255 },
+  category: { type: String, enum: ["web", "mobile", "network"] },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished;
+    },
+    min: 10,
+    max: 200,
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema); // Course -> class
@@ -21,15 +30,19 @@ const Course = mongoose.model("Course", courseSchema); // Course -> class
 async function createCourse() {
   const course = new Course({
     name: "node course",
+    category: "-",
     author: "Mosh",
     tags: ["node", "backend"],
     isPublished: true,
   });
-  const result = await course.save();
-  console.log(result);
-}
 
-// createCourse();
+  try {
+    const result = await course.save();
+    console.log(result);
+  } catch (exception) {
+    console.log(exception.message);
+  }
+}
 
 // QUERY with FILTER
 async function getCourses() {
@@ -55,8 +68,6 @@ async function getCourses() {
   console.log(courses);
 }
 
-// getCourses();
-
 async function getCoursesOR() {
   // or
   // and
@@ -68,8 +79,6 @@ async function getCoursesOR() {
 
   console.log(courses);
 }
-
-// getCoursesOR();
 
 async function getCoursesRE() {
   // in Regular Expression:
@@ -89,8 +98,6 @@ async function getCoursesRE() {
   console.log(courses);
 }
 
-// getCoursesRE();
-
 async function updateCourseQueryFirst(id) {
   // Approach: Query first
   // findById()
@@ -107,8 +114,6 @@ async function updateCourseQueryFirst(id) {
   console.log(result);
 }
 
-// updateCourseQueryFirst("61cfa78bf758f787d19ca676");
-
 async function updateCourseUpdateFirst(id) {
   // Approach: Update first
   // Update directly
@@ -123,8 +128,6 @@ async function updateCourseUpdateFirst(id) {
   console.log(result);
 }
 
-// updateCourseUpdateFirst("61cfa78bf758f787d19ca676");
-
 async function removeCourse(id) {
   // delete directly
   // const result = await Course.deleteOne({ _id: id }); // vs.deleteMany
@@ -135,4 +138,11 @@ async function removeCourse(id) {
   console.log(course);
 }
 
-removeCourse("61cfa78bf758f787d19ca676");
+createCourse();
+
+// getCourses();
+// getCoursesOR();
+// getCoursesRE();
+// updateCourseQueryFirst("61cfa78bf758f787d19ca676");
+// updateCourseUpdateFirst("61cfa78bf758f787d19ca676");
+// removeCourse("61cfa78bf758f787d19ca676");
