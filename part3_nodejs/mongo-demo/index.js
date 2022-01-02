@@ -9,7 +9,12 @@ mongoose
 // DEFINING A SCHEMA
 const courseSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 5, maxlength: 255 },
-  category: { type: String, enum: ["web", "mobile", "network"] },
+  category: {
+    type: String,
+    enum: ["web", "mobile", "network"],
+    lowercase: true,
+    trim: true,
+  },
   author: String,
   tags: {
     type: Array,
@@ -35,6 +40,8 @@ const courseSchema = new mongoose.Schema({
     },
     min: 10,
     max: 200,
+    get: (v) => Math.round(v), // for retriving historical data
+    set: (v) => Math.round(v), // for saving new data
   },
 });
 
@@ -44,11 +51,11 @@ const Course = mongoose.model("Course", courseSchema); // Course -> class
 async function createCourse() {
   const course = new Course({
     name: "node course",
-    category: "webb",
+    category: "WEB",
     author: "Mosh",
     tags: ["node", "backend"],
     isPublished: true,
-    // price: 20,
+    price: 20.5,
   });
 
   try {
