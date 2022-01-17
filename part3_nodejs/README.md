@@ -362,4 +362,38 @@ async function displayCommits() {
 }
 ```
 
+Here's an example from [fireship.io](https://youtu.be/vn3tm0quoqE?t=463) about turing chained promises to async and awaits.
+
+chained promise:
+```ts
+const makeSmoothie = () => {
+  let a;
+  return getFruit('pineapple')
+    .then(v => {
+      v = a;
+      return getFruit('strawberry')
+    })
+    .then(v => v+a)
+}
+```
+
+async await version (with a common async mistake):
+```ts
+const makeSmoothie = async () => {
+  const a = await getFruit('pineapple');
+  const b = await getFruit('strawberry');
+  return [a, b];
+}
+```
+
+better async await version:
+```ts
+const makeSmoothie = async () => {
+  const a = getFruit('pineapple');
+  const b = getFruit('strawberry');
+  const smoothie = await Promise.all([a,b]);
+  return smoothie;
+}
+```
+
 https://web.dev/promises/
