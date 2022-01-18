@@ -13,7 +13,7 @@
 
 // changing callbakcs to promises.
 function getUser(id) {
-  return new Promise((resolve, rejcet) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       console.log("Reading a user from database...");
       resolve({ id: id, githubUsername: "Toby" });
@@ -21,16 +21,15 @@ function getUser(id) {
   });
 }
 
-console.log("Before");
-const user = getUser(2);
-user
-  .then((user) => getRepositories(user.githubUsername))
-  .then((repos) => getCommits(repos[0]))
-  .then((commits) => console.log("Commits:", commits))
-  .catch((err) => console.log("Error:", err.message));
-// always a good practice to catch erros
-
-console.log("After");
+// console.log("Before");
+// const user = getUser(2);
+// user
+//   .then((user) => getRepositories(user.githubUsername))
+//   .then((repos) => getCommits(repos[0]))
+//   .then((commits) => console.log("Commits:", commits))
+//   .catch((err) => console.log("Error:", err.message));
+// // always a good practice to catch errors
+// console.log("After");
 
 function getRepositories(username) {
   return new Promise((resolve, reject) => {
@@ -44,7 +43,7 @@ function getRepositories(username) {
 function getCommits(repo) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log("Calling github api...");
+      console.log("getting github commits...");
       resolve(["commit"]);
     }, 2000);
   });
@@ -56,11 +55,32 @@ function getCommits(repo) {
 // -> await keyword has to be paired with async decorator
 async function displayCommits() {
   try {
-    const user2 = await getUser(1);
-    const repos = await getRepositories(user2.githubUsername);
+    const startTime = new Date();
+    const user = await getUser(1);
+    const repos = await getRepositories(user.githubUsername);
     const commits = await getCommits(repos[0]);
-    console.log(commits);
+    const results = Promise.all([user, repos, commits]);
+    const endTime = new Date();
+    console.log(endTime - startTime + " seconds, exp1\n");
+    return results
   } catch (error) {
     console.log("error:", error.message);
   }
 }
+const a = displayCommits();
+
+async function displayCommits2() {
+  try {
+    const startTime = new Date();
+    const user =  getUser(1);
+    const repos =  getRepositories(user.githubUsername);
+    const commits =  getCommits(repos[0]);
+    const results = await Promise.all([user, repos, commits]);
+    const endTime = new Date();
+    console.log(endTime - startTime + " seconds, exp2\n");
+    return results
+  } catch (error) {
+    console.log("error:", error.message);
+  }
+}
+const b = displayCommits2();

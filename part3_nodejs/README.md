@@ -396,4 +396,22 @@ const makeSmoothie = async () => {
 }
 ```
 
+even better async await with try catch:
+```ts
+const badSmoothie = async () => {
+  try {
+    const a = getFruit('pineapple');
+    const b = getFruit('strawberry');
+    const smoothie = await Promise.all([a,b])
+
+    throw 'broken!'
+
+    return smoothie
+  } catch (err) {
+    console.log(err)
+    return //...
+  }
+}
+```
+
 https://web.dev/promises/
