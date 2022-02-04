@@ -415,3 +415,27 @@ const badSmoothie = async () => {
 ```
 
 https://web.dev/promises/
+
+
+test around:
+```js
+function getUser(id) {
+  return new Promise((resolve, rejcet) => {
+    setTimeout(() => {
+      console.log("Reading a user from database...");
+      resolve({ id: id, githubUsername: "Toby" });
+    }, 2000);
+  });
+}
+
+let a = 0 ;
+const user = getUser(2)
+  .then(v => {
+    a = v
+    return "weird"
+  })
+  .catch((err) => console.log("Error:", err.message));
+  // .then((user) => getRepositories(user.githubUsername))
+  // .then((repos) => getCommits(repos[0]))
+  // .then((commits) => console.log("Commits:", commits))
+```
